@@ -1,0 +1,5 @@
+(executable 
+  (name mongodb_ocaml_tutorial) 
+  (libraries unix mongo )
+)
+
