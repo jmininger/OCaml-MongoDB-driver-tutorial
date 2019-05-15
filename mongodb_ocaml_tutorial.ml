@@ -2,6 +2,10 @@
 
 type person = { name: string; age: int; hobbies: string list }
 
+let person_to_str {name; age; hobbies } =
+  let hobby_str = String.concat ", " hobbies in
+  Printf.sprintf "Name: %s, age: %d, hobbies: %s" name age hobby_str
+
 let person_to_bson {name; age; hobbies} = 
   let hobby_elems = List.map (Bson.create_string) hobbies in
   Bson.empty 
@@ -9,6 +13,19 @@ let person_to_bson {name; age; hobbies} =
   |> Bson.add_element "age" (Bson.create_int64 (Int64.of_int age))
   |> Bson.add_element "hobbies" (Bson.create_list hobby_elems)
 
+let bson_to_person bson = 
+  let name = 
+    Bson.get_element "name" bson
+      |> Bson.get_string in
+  let age = 
+     Bson.get_element "age" bson
+      |> Bson.get_int64 
+      |> Int64.to_int in
+  let hobbies =
+    Bson.get_element "hobbies" bson
+      |> Bson.get_list 
+      |> List.map (Bson.get_string) in
+  {name; age; hobbies }
 
 (*********************** Creating a db instance ************************)
 
@@ -83,11 +100,15 @@ let () =
 
   (* Print documents matching the query *)
   query1 ()
-    |> List.map Bson.to_simple_json
+    |> List.map bson_to_person
+    |> List.map person_to_str
     |> List.iter print_endline;
 
   query2 ()
     |> List.map Bson.to_simple_json
     |> List.iter print_endline;
-    
+  
+  
+  (* Delete all elements in the database *)  
+  Mongo.delete_all myMongoDB Bson.empty;
   Mongo.destory myMongoDB
