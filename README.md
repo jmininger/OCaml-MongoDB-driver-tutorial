@@ -11,7 +11,7 @@ Commands in the _Mongo_ API are synchronous, but there is a Mongo\_lwt package
 inside of module in the [MongoML Repo][2] that wraps all _Mongo_ functions
 in a Lwt monad. This module does not appear to come in the opam package.  
   
-####APIs
+#### APIs
 Here is the documentation for the three APIs that we will be using:
   - [Mongo](http://massd.github.io/mongo/doc/Mongo.html)
   - [MongoAdmin](http://massd.github.io/mongo/doc/MongoAdmin.html)
@@ -114,7 +114,7 @@ let bson_to_person bson =
       |> List.map (Bson.get_string) in
   {name; age; hobbies }
 
-(** Main: Insert 5 documents into mongodb and print any exceptions that are thrown)
+(** Main: Insert 5 documents into mongodb and print any exceptions that are thrown *)
 let () =
   let people = [
         {name="John Doe"; age=21; hobbies=["Soccer"; "Coding"]};
